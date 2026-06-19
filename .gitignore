@@ -1,1 +1,5 @@
 inventory.json
+
+# compiled binaries
+*.exe
+go-inventory-system
