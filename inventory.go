@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"sort"
 )
 
@@ -109,6 +111,34 @@ func (inv *Inventory) LowStock(threshold int) []*Item {
 	})
 
 	return itemPtr
+}
+
+func (inv *Inventory) Save(path string) error {
+	jsonData, err := json.MarshalIndent(inv, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(path, jsonData, 1000)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (inv *Inventory) Load(path string) error {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(file, inv)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (ierr InventoryError) Error() string {
