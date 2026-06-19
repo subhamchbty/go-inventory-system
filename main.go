@@ -94,6 +94,16 @@ func (inv *Inventory) Sell(sku string, amount int) error {
 	return nil
 }
 
+func (inv *Inventory) TotalValue() float64 {
+	var totalValue float64
+
+	for _, value := range inv.Items {
+		totalValue += value.TotalValue()
+	}
+
+	return totalValue
+}
+
 type InventoryError struct {
 	SKU string
 	Op  string // e.g. "restock", "sell", "add"
@@ -106,24 +116,18 @@ func (ierr InventoryError) Error() string {
 
 func main() {
 	inv := NewInventory()
+	inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 3})
+	inv.AddItem(Item{SKU: "G-002", Name: "Gadget", Price: 9.00, Quantity: 1})
+	inv.AddItem(Item{SKU: "T-003", Name: "Thingamajig", Price: 2.00, Quantity: 50})
 
-	err := inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 10})
+	err := inv.Sell("Z-999", 1) // unknown SKU
+	// err should be a *InventoryError with SKU="Z-999", Op="sell"
 	if invErr, ok := errors.AsType[*InventoryError](err); ok {
 		fmt.Println(invErr.Error())
 	}
 
-	err = inv.Restock("W-001", 5) // Quantity becomes 15
-	if invErr, ok := errors.AsType[*InventoryError](err); ok {
-		fmt.Println(invErr.Error())
-	}
+	fmt.Println(inv.TotalValue())
 
-	err = inv.Sell("W-001", 20) // should return an error, Quantity stays 15
-	if invErr, ok := errors.AsType[*InventoryError](err); ok {
-		fmt.Println(invErr.Error())
-	}
+	// inv.LowStock(5) // should return G-002 (qty 1) then W-001 (qty 3), in that order
 
-	err = inv.Sell("W-001", 15) // Quantity becomes 0, no error
-	if invErr, ok := errors.AsType[*InventoryError](err); ok {
-		fmt.Println(invErr.Error())
-	}
 }
