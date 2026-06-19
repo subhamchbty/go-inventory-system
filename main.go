@@ -127,7 +127,7 @@ type InventoryError struct {
 	Msg string
 }
 
-func (ierr InventoryError) Error() string {
+func (ierr *InventoryError) Error() string {
 	return fmt.Sprintf("Error: %s. SKU=%q, Op=%s", ierr.Msg, ierr.SKU, ierr.Op)
 }
 
