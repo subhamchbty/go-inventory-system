@@ -36,8 +36,8 @@ func main() {
 	fmt.Println(inv2.TotalValue())
 
 	var r Reporter = inv
-	fmt.Println(r.Report())
+	printReport(r)
 
 	var r2 Reporter = &SimpleCounter{}
-	fmt.Println(r2.Report())
+	printReport(r2)
 }
