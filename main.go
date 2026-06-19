@@ -6,6 +6,15 @@ import (
 
 const inventoryStorePath string = "inventory.json"
 
+type SimpleCounter struct {
+	count int
+}
+
+func (c *SimpleCounter) Report() string {
+	c.count++
+	return fmt.Sprintf("Reports generated: %d", c.count)
+}
+
 func main() {
 	inv := NewInventory()
 	inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 3})
@@ -25,4 +34,10 @@ func main() {
 
 	fmt.Println(inv.TotalValue())
 	fmt.Println(inv2.TotalValue())
+
+	var r Reporter = inv
+	fmt.Println(r.Report())
+
+	var r2 Reporter = &SimpleCounter{}
+	fmt.Println(r2.Report())
 }

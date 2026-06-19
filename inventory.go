@@ -141,6 +141,19 @@ func (inv *Inventory) Load(path string) error {
 	return nil
 }
 
+func (inv *Inventory) Report() string {
+	var totalUnits int
+	for _, item := range inv.Items {
+		totalUnits += item.Quantity
+	}
+
+	return fmt.Sprintf("Distinct SKUs: %d\nTotal units: %d\nTotal value: $%.2f",
+		len(inv.Items),
+		totalUnits,
+		inv.TotalValue(),
+	)
+}
+
 func (ierr InventoryError) Error() string {
 	return fmt.Sprintf("Error: %s. SKU=%q, Op=%s", ierr.Msg, ierr.SKU, ierr.Op)
 }
