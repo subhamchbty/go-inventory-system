@@ -5,16 +5,6 @@ import (
 	"fmt"
 )
 
-type InventoryError struct {
-	SKU string
-	Op  string // e.g. "restock", "sell", "add"
-	Msg string
-}
-
-func (ierr InventoryError) Error() string {
-	return fmt.Sprintf("Error: %s. SKU=%q, Op=%s", ierr.Msg, ierr.SKU, ierr.Op)
-}
-
 func main() {
 	inv := NewInventory()
 	inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 3})

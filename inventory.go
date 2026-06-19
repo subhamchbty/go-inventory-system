@@ -1,9 +1,18 @@
 package main
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 type Inventory struct {
 	Items map[string]*Item // keyed by SKU
+}
+
+type InventoryError struct {
+	SKU string
+	Op  string // e.g. "restock", "sell", "add"
+	Msg string
 }
 
 func NewInventory() *Inventory {
@@ -100,4 +109,8 @@ func (inv *Inventory) LowStock(threshold int) []*Item {
 	})
 
 	return itemPtr
+}
+
+func (ierr InventoryError) Error() string {
+	return fmt.Sprintf("Error: %s. SKU=%q, Op=%s", ierr.Msg, ierr.SKU, ierr.Op)
 }
