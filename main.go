@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sort"
 )
 
 type Item struct {
@@ -104,6 +105,22 @@ func (inv *Inventory) TotalValue() float64 {
 	return totalValue
 }
 
+func (inv *Inventory) LowStock(threshold int) []*Item {
+	itemPtr := []*Item{}
+
+	for _, value := range inv.Items {
+		if value.Quantity < threshold {
+			itemPtr = append(itemPtr, value)
+		}
+	}
+
+	sort.Slice(itemPtr, func(i, j int) bool {
+		return itemPtr[i].Quantity < itemPtr[j].Quantity
+	})
+
+	return itemPtr
+}
+
 type InventoryError struct {
 	SKU string
 	Op  string // e.g. "restock", "sell", "add"
@@ -128,6 +145,7 @@ func main() {
 
 	fmt.Println(inv.TotalValue())
 
-	// inv.LowStock(5) // should return G-002 (qty 1) then W-001 (qty 3), in that order
+	lowStockItems := inv.LowStock(5) // should return G-002 (qty 1) then W-001 (qty 3), in that order
 
+	fmt.Println(lowStockItems)
 }
