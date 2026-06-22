@@ -49,4 +49,4 @@ go build .
 ## Packages used
 
 Only the standard library: `fmt`, `os`, `errors`, `encoding/json`, `sort`, `time`.
-No third party stuff.
+No third party packages.
