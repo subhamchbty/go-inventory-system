@@ -332,14 +332,14 @@ Add a custom `UnmarshalJSON` method on `Item` that rejects negative prices or qu
 ## Checklist before you consider it done
 
 - [x] `Item` methods use value receivers; `Inventory` mutating methods use pointer receivers, and you can justify each choice
-- [ ] `AddItem`/`AddPerishable` reject duplicate SKUs without panicking or overwriting
-- [ ] `Restock`/`Sell` reject invalid amounts and insufficient stock, returning `*InventoryError` via the `error` interface
-- [ ] `errors.As` is used at least once to recover structured error fields, not just `err.Error()` string-matching
-- [ ] JSON round-trip (`Save` then `Load` into a fresh `Inventory`) preserves all field values exactly
-- [ ] `Reporter` interface is satisfied by two unrelated types and exercised through `printReport`
-- [ ] `PerishableItem` correctly promotes `Item`'s methods with zero forwarding code
-- [ ] `go vet ./...` reports no issues
-- [ ] `gofmt -l .` reports no unformatted files
+- [x] `AddItem`/`AddPerishable` reject duplicate SKUs without panicking or overwriting
+- [x] `Restock`/`Sell` reject invalid amounts and insufficient stock, returning `*InventoryError` via the `error` interface
+- [x] `errors.As` is used at least once to recover structured error fields, not just `err.Error()` string-matching
+- [x] JSON round-trip (`Save` then `Load` into a fresh `Inventory`) preserves all field values exactly
+- [x] `Reporter` interface is satisfied by two unrelated types and exercised through `printReport`
+- [x] `PerishableItem` correctly promotes `Item`'s methods with zero forwarding code
+- [x] `go vet ./...` reports no issues
+- [x] `gofmt -l .` reports no unformatted files
 
 ---
 
