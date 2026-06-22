@@ -22,7 +22,7 @@ func (i Item) TotalValue() float64 {
 }
 
 func (i Item) String() string {
-	return fmt.Sprintf("Widget (SKU: %s): %d units @ $%g", i.SKU, i.Quantity, i.Price)
+	return fmt.Sprintf("%s (SKU: %s): %d units @ $%g", i.Name, i.SKU, i.Quantity, i.Price)
 }
 
 func (p PerishableItem) IsExpired(today string) bool {
