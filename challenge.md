@@ -331,7 +331,7 @@ Add a custom `UnmarshalJSON` method on `Item` that rejects negative prices or qu
 
 ## Checklist before you consider it done
 
-- [ ] `Item` methods use value receivers; `Inventory` mutating methods use pointer receivers, and you can justify each choice
+- [x] `Item` methods use value receivers; `Inventory` mutating methods use pointer receivers, and you can justify each choice
 - [ ] `AddItem`/`AddPerishable` reject duplicate SKUs without panicking or overwriting
 - [ ] `Restock`/`Sell` reject invalid amounts and insufficient stock, returning `*InventoryError` via the `error` interface
 - [ ] `errors.As` is used at least once to recover structured error fields, not just `err.Error()` string-matching

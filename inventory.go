@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"time"
 )
 
 type Inventory struct {
-	Items map[string]*Item // keyed by SKU
+	Items       map[string]*Item           `json:"items"` // keyed by SKU
+	Perishables map[string]*PerishableItem `json:"perishables"`
 }
 
 type InventoryError struct {
@@ -18,11 +20,11 @@ type InventoryError struct {
 }
 
 func NewInventory() *Inventory {
-	return &Inventory{Items: map[string]*Item{}}
+	return &Inventory{Items: map[string]*Item{}, Perishables: map[string]*PerishableItem{}}
 }
 
 func (inv *Inventory) AddItem(item Item) error {
-	if inv.Items[item.SKU] != nil {
+	if inv.Perishables[item.SKU] != nil || inv.Items[item.SKU] != nil {
 		return &InventoryError{
 			SKU: item.SKU,
 			Op:  "add",
@@ -31,6 +33,20 @@ func (inv *Inventory) AddItem(item Item) error {
 	}
 
 	inv.Items[item.SKU] = &item
+
+	return nil
+}
+
+func (inv *Inventory) AddPerishable(item PerishableItem) error {
+	if inv.Perishables[item.SKU] != nil || inv.Items[item.SKU] != nil {
+		return &InventoryError{
+			SKU: item.SKU,
+			Op:  "add",
+			Msg: "item already exists",
+		}
+	}
+
+	inv.Perishables[item.SKU] = &item
 
 	return nil
 }
@@ -94,6 +110,10 @@ func (inv *Inventory) TotalValue() float64 {
 		totalValue += value.TotalValue()
 	}
 
+	for _, p := range inv.Perishables {
+		totalValue += p.TotalValue()
+	}
+
 	return totalValue
 }
 
@@ -143,14 +163,25 @@ func (inv *Inventory) Load(path string) error {
 
 func (inv *Inventory) Report() string {
 	var totalUnits int
+	var totalExpired int
 	for _, item := range inv.Items {
 		totalUnits += item.Quantity
 	}
 
-	return fmt.Sprintf("Distinct SKUs: %d\nTotal units: %d\nTotal value: $%.2f",
-		len(inv.Items),
+	today := time.Now()
+	for _, p := range inv.Perishables {
+		if p.IsExpired(today.Format("2006-01-02")) {
+			totalExpired++
+		}
+		totalUnits += p.Quantity
+	}
+
+	return fmt.Sprintf("Distinct SKUs: %d\nTotal units: %d\nTotal value: $%.2f\nPerishable Items: %d\nExpired Items: %d",
+		len(inv.Items)+len(inv.Perishables),
 		totalUnits,
 		inv.TotalValue(),
+		len(inv.Perishables),
+		totalExpired,
 	)
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 const inventoryStorePath string = "inventory.json"
@@ -17,23 +18,39 @@ func (c *SimpleCounter) Report() string {
 
 func main() {
 	inv := NewInventory()
-	inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 3})
-	inv.AddItem(Item{SKU: "G-002", Name: "Gadget", Price: 9.00, Quantity: 1})
-	inv.AddItem(Item{SKU: "T-003", Name: "Thingamajig", Price: 2.00, Quantity: 50})
-
-	err := inv.Save(inventoryStorePath)
+	err := inv.AddItem(Item{SKU: "W-001", Name: "Widget", Price: 4.50, Quantity: 3})
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
+	}
+	err = inv.AddItem(Item{SKU: "G-002", Name: "Gadget", Price: 9.00, Quantity: 1})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = inv.AddItem(Item{SKU: "T-003", Name: "Thingamajig", Price: 2.00, Quantity: 50})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = inv.AddPerishable(PerishableItem{
+		Item:       Item{SKU: "T-005", Name: "Milk", Price: 3.20, Quantity: 8},
+		ExpiryDate: "2026-06-17",
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = inv.Save(inventoryStorePath)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	inv2 := NewInventory()
 	err = inv2.Load(inventoryStorePath)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
-
-	fmt.Println(inv.TotalValue())
-	fmt.Println(inv2.TotalValue())
 
 	var r Reporter = inv
 	printReport(r)
